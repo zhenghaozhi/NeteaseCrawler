@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>搜索页面</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+        }
+        .center-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .material-icons-search {
+            font-size: 120px;
+            color: #ffffff;
+        }
+        .heading-search {
+            font-size: 2.5em;
+            color: #ffffff;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .search-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #ecf0f1;
+            opacity: 0.80;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 500px;
+        }
+        .search-form input[type="text"] {
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            width: 460px;
+            margin-bottom: 10px;
+        }
+        .search-form div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px 0;
+        }
+        .search-form label {
+            color: #2c3e50;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        .search-form button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: #00008B;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .search-form button:hover {
+            background-color: #00008B;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.getElementById('searchForm');
+            form.addEventListener('submit', function(event) {
+                var songRadio = document.getElementById('song');
+                if (songRadio.checked) {
+                    form.action = "{% url 'search_songs' %}";
+                } else {
+                    form.action = "{% url 'search_artists' %}";
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="center-container">
+        <i class="material-icons material-icons-search">search</i>
+        &nbsp;
+        <form id="searchForm" class="search-form" method="get">
+            <input type="text" name="q" maxlength="20" placeholder="输入关键词" required>
+            <div>
+                <input type="radio" name="type" value="song" id="song" checked>
+                <label for="song">歌曲</label>
+                <input type="radio" name="type" value="artist" id="artist" style="margin-left: 10px;">
+                <label for="artist">歌手</label>
+            </div>
+            <button type="submit">搜索</button>
+        </form>
+    </div>
+</body>
+</html>
+
+{% endblock %}

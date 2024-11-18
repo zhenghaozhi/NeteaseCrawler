@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+<head>
+    <title>{{ song.music_name }}</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .content-music-detail {
+            opacity: 0.85;
+        }
+        .h1, .h2 {
+            color: #fff;
+        }
+        a {
+            color: #1E90FF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        img {
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            margin: 20px auto;
+        }
+        .content-music-detail {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        .lyrics-music-detail, .comments-music-detail {
+            margin: 20px 0;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: #fff;
+        }
+        .button {
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            background-color: #1E90FF;
+            color: #fff;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #1C86EE;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        .li {
+            background-color: #2a2a2a;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-music-detail">
+        <h1 class="h1"><strong>{{ song.music_name }}</strong></h1>
+        <img src="/static/img/{{ song.id }}.jpg" alt="Artist Image">
+        <div>
+            歌手: <a href="/music/artist/{{ artist.id }}">{{ song.artist_name }}</a>
+            {% if song.artist_cnt == 2 %}
+                & <a href="/music/artist/{{ sub_artist.id }}">{{ song.sub_artist_name }}</a>
+            {% elif song.artist_cnt >= 3 %}
+                & <a href="/music/artist/{{ sub_artist.id }}">{{ song.sub_artist_name }}</a> 等共{{ song.artist_cnt }}位歌手
+            {% endif %}
+        </div>
+        <div>网址：<a href="https://music.163.com/#/song?id={{ song.id }}">https://music.163.com/#/song?id={{ song.id }}</a></div>
+        <div>歌单: <a href="https://music.163.com/#/album?id={{ song.album_id }}">{{ song.album_name }}</a></div>
+        <div class="lyrics-music-detail">
+            <h2 class="h2">歌词：</h2>
+            {% for line in lyrics_list %}
+                <div>{{ line }}</div>
+            {% endfor %}
+        </div>
+        <div class="comments-music-detail">
+            <h2>评论</h2>
+            <form id="commentForm" method="post" action="{% url 'add_comment' song.id %}">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="用户名" required>
+                <textarea name="comment_text" rows="4" cols="50" placeholder="输入评论..." required></textarea><br>
+                <button type="submit" class="button">提交评论</button>
+            </form>
+            <ul id="commentList">
+                {% for comment in comments %}
+                <li class = "li">
+                    <p><strong>{{ comment.username }}</strong>: {{ comment.text }}</p>
+                    <p>时间: {{ comment.time }}</p>
+                    <form method="post" action="{% url 'delete_comment' song.id comment.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="button">删除评论</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+
+{% endblock %}

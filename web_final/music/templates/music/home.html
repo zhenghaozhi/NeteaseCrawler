@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>MUSIC HOME</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+        }
+        .center-container-home {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .material-icons-home {
+            font-size: 120px;
+            color: #ffffff;
+        }
+        .heading-home {
+            font-size: 3em;
+            color: #ffffff;
+            font-weight: bold;
+            margin: 0;
+        }
+        .subheading-home {
+            font-size: 1.5em;
+            color: #ffffff;
+            font-weight: bold;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="center-container-home">
+        <i class="material-icons material-icons-home">library_music</i>
+        &nbsp;
+        <h1 class="heading-home">WELCOME TO MUSIC HOME</h1>
+        <p class="subheading-home">计36班 郑皓之 2023012168</p>
+    </div>
+</body>
+</html>
+
+{% endblock %}

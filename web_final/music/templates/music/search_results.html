@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results</title>
+</head>
+<body>
+    <h1>Search Results for "{{ query }}"</h1>
+    <p>Search Type: {{ search_type }}</p>
+    <p>Total Results: {{ total_results }}</p>
+    <p>Search Time: {{ search_time }} seconds</p>
+    
+    <h2>Full Matches</h2>
+    {% if full_matches %}
+        <ul>
+        {% for result in full_matches %}
+            <li>
+                <a href="{% url 'song_detail' result.id %}">
+                    {% if search_type == 'song' %}
+                        {{ result.music_name }}
+                    {% else %}
+                        {{ result.artist_name }}
+                    {% endif %}
+                </a>
+                <img src="{{ result.img_url }}" alt="{% if search_type == 'song' %}{{ result.music_name }}{% else %}{{ result.artist_name }}{% endif %}" width="50" height="50">
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No full matches found.</p>
+    {% endif %}
+
+    <h2>Partial Matches</h2>
+    {% if partial_matches %}
+        <ul>
+        {% for result in partial_matches %}
+            <li>
+                <a href="{% url 'song_detail' result.id %}">
+                    {% if search_type == 'song' %}
+                        {{ result.music_name }}
+                    {% else %}
+                        {{ result.artist_name }}
+                    {% endif %}
+                </a>
+                <img src="{{ result.img_url }}" alt="{% if search_type == 'song' %}{{ result.music_name }}{% else %}{{ result.artist_name }}{% endif %}" width="50" height="50">
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No full matches found.</p>
+    {% endif %}
+</body>
+</html>

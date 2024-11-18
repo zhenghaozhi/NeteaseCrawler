@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search Results</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+        }
+        .search-container {
+            text-align: center;
+            text-decoration: none;
+        }
+        .search-results {
+            margin: 20px auto;
+            width: 90%;
+            max-width: 700px;
+            text-decoration: none;
+        }
+        .search-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            opacity: 0.80;
+            background-color: #f9f9f9;
+            border-radius: 100px;
+            color: #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 0;
+            color: #000000;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .search-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 20px;
+            text-decoration: none;
+        }
+        .search-item:hover {
+            text-decoration: none;
+        }
+        .pagination {
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .pagination .step-links a {
+            margin: 0 5px;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #000;
+            background-color: #ffffff;
+            border-radius: 25px;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+        .pagination .step-links a:hover {
+            background-color: #f2f2f2;
+        }
+        .pagination .step-links .current {
+            margin: 0 5px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background-color: #d3d3d3;
+            color: #000000;
+            pointer-events: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-jump-form {
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .page-jump-form input[type="number"] {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #00008B;
+        }
+        .page-jump-form button {
+            padding: 5px 10px;
+            margin-left: 5px;
+            border-radius: 5px;
+            border: none;
+            background-color: #00008B;
+            color: white;
+        }
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        @keyframes ripple-animation {
+            to {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        <h1><strong>搜索:  "{{ query }}"</strong></h1>
+        &nbsp;
+        <p>搜索类型: 歌手</p>
+        <p>搜索结果: {{ total_results }}</p>
+        <p>搜索时间: {{ search_time }} seconds</p>
+
+        &nbsp;
+        <h2>完全匹配歌手</h2>
+        {% if full_matches %}
+            <div class="search-results">
+            {% for result in full_matches %}
+                <a href="{% url 'artist_detail' result.id %}" class="search-item">
+                    <img src="/static/artist/{{ result.id }}.jpg" alt="{{ result.artist_name }}">
+                    <div class="name">
+                        {% if search_type == 'song' %}
+                            {{ result.music_name }}
+                        {% else %}
+                            {{ result.artist_name }}
+                        {% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+            </div>
+        {% else %}
+            <p>无完全匹配歌手</p>
+        {% endif %}
+
+        &nbsp;
+        <h2>部分匹配歌手</h2>
+        {% if partial_matches %}
+            <div class="search-results">
+            {% for result in partial_matches %}
+                <a href="{% url 'artist_detail' result.id %}" class="search-item">
+                    <img src="/static/artist/{{ result.id }}.jpg" alt="{{ result.artist_name }}">
+                    <div class="name">
+                        {% if search_type == 'song' %}
+                            {{ result.music_name }}
+                        {% else %}
+                            {{ result.artist_name }}
+                        {% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+            </div>
+        {% else %}
+            <p>无部分匹配歌手</p>
+        {% endif %}
+
+        <div class="pagination" style="display: block;">
+            <span class="step-links">
+                <a href="?q={{ query }}&type={{ search_type }}&page=1">&laquo; 首页</a>
+
+                {% if page_obj.number > 2 %}
+                    <a href="?q={{ query }}&type={{ search_type }}&page={{ page_obj.number|add:-2 }}">{{ page_obj.number|add:-2 }}</a>
+                {% endif %}
+                
+                {% if page_obj.number > 1 %}
+                    <a href="?q={{ query }}&type={{ search_type }}&page={{ page_obj.number|add:-1 }}">{{ page_obj.number|add:-1 }}</a>
+                {% endif %}
+
+                <span class="current">{{ page_obj.number }}</span>
+
+                {% if page_obj.number < page_obj.paginator.num_pages %}
+                    <a href="?q={{ query }}&type={{ search_type }}&page={{ page_obj.number|add:1 }}">{{ page_obj.number|add:1 }}</a>
+                {% endif %}
+                
+                {% if page_obj.number < page_obj.paginator.num_pages|add:-1 %}
+                    <a href="?q={{ query }}&type={{ search_type }}&page={{ page_obj.number|add:2 }}">{{ page_obj.number|add:2 }}</a>
+                {% endif %}
+
+                <a href="?q={{ query }}&type={{ search_type }}&page={{ page_obj.paginator.num_pages }}">尾页 &raquo;</a>
+            </span>
+            <div class="page-directer"  style="display: block;">
+                <form method="get" action="" class="page-jump-form">
+                    <input type="hidden" name="q" value="{{ query }}">
+                    <input type="hidden" name="type" value="{{ search_type }}">
+                    <input type="number" name="page" min="1" max="{{ page_obj.paginator.num_pages }}" placeholder="页码" style="width: 60px;">
+                    <button type="submit">跳转</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const links = document.querySelectorAll('.search-item, .pagination .step-links a');
+            links.forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    var rect = link.getBoundingClientRect();
+                    var ripple = document.createElement('span');
+                    ripple.className = 'ripple';
+                    ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
+                    link.appendChild(ripple);
+                    ripple.style.left = e.clientX - rect.left - ripple.offsetWidth / 2 + 'px';
+                    ripple.style.top = e.clientY - rect.top - ripple.offsetHeight / 2 + 'px';
+
+                    setTimeout(function() {
+                        window.location.href = link.href;
+                    }, 200);
+
+                    ripple.addEventListener('animationend', function() {
+                        ripple.parentNode.removeChild(ripple);
+                    });
+
+                    e.preventDefault();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

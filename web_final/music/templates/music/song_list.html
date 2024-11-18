@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Songs</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+        }
+        .song-container-music-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            text-decoration: none;
+        }
+        .song-card-music-list {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            opacity: 0.80;
+            background-color: #ffffff;
+            margin: 10px;
+            padding: 10px;
+            border-radius: 26px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: calc(33% - 20px);
+            text-decoration: none;
+            color: #333;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+        }
+        .song-card-music-list:hover {
+            background-color: #f2f2f2;
+            text-decoration: none;
+        }
+        .song-card-music-list:hover .song-title-music-list {
+            text-decoration: none;
+        }
+        .song-image-music-list {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin: 10px;
+        }
+        .song-info-music-list {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 0;
+            margin-left: 10px;
+        }
+        .song-title-music-list {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0;
+            color: #000000;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .song-album-music-list, .song-artist-music-list {
+            line-height: 1;
+            margin: 5px 0;
+            font-size: 1em;
+            color: #000000;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .pagination-music-list {
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .pagination-music-list .step-links-music-list a {
+            margin: 0 5px;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #000000;
+            background-color: #ffffff;
+            border-radius: 25px;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+        .pagination-music-list .step-links-music-list a:hover {
+            background-color: #f2f2f2;
+        }
+        .pagination-music-list .step-links-music-list .current {
+            margin: 0 5px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            background-color: #d3d3d3;
+            color: #000000;
+            pointer-events: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-jump-form {
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .page-jump-form input[type="number"] {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #00008B;
+        }
+        .page-jump-form button {
+            padding: 5px 10px;
+            margin-left: 5px;
+            border-radius: 5px;
+            border: none;
+            background-color: #00008B;
+            color: white;
+        }
+        .ripple-music-list {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation-music-list 0.6s linear;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        @keyframes ripple-animation-music-list {
+            to {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="song-container-music-list">
+        {% for song in page_obj %}
+            <a href="{% url 'song_detail' song.id %}" class="song-card-music-list">
+                <img src="/static/img/{{ song.id }}.jpg" alt="{{ song.music_name }}" class="song-image-music-list">
+                <div class="song-info-music-list">
+                    <div class="song-title-music-list">{{ song.music_name }}</div>
+                    <div sylte="font-size: 2px;">&nbsp;</div>
+                    <div class="song-album-music-list">专辑: {{ song.album_name }}</div>
+                    <div class="song-artist-music-list">
+                        歌手: {{ song.artist_name }}
+                        {% if song.artist_cnt == 2 %}
+                            & {{ song.sub_artist_name }}
+                        {% elif song.artist_cnt >= 3 %}
+                            & {{ song.sub_artist_name }} 等共{{ song.artist_cnt }}位歌手
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="pagination-music-list">
+        <span class="step-links-music-list">
+            <a href="?page=1">&laquo; 首页</a>
+
+            {% if page_obj.number > 2 %}
+                <a href="?page={{ page_obj.number|add:-2 }}">{{ page_obj.number|add:-2 }}</a>
+            {% endif %}
+            
+            {% if page_obj.number > 1 %}
+                <a href="?page={{ page_obj.number|add:-1 }}">{{ page_obj.number|add:-1 }}</a>
+            {% endif %}
+            
+            <span class="current">{{ page_obj.number }}</span>
+            
+            {% if page_obj.number < page_obj.paginator.num_pages %}
+                <a href="?page={{ page_obj.number|add:1 }}">{{ page_obj.number|add:1 }}</a>
+            {% endif %}
+            
+            {% if page_obj.number < page_obj.paginator.num_pages|add:-1 %}
+                <a href="?page={{ page_obj.number|add:2 }}">{{ page_obj.number|add:2 }}</a>
+            {% endif %}
+            
+            <a href="?page={{ page_obj.paginator.num_pages }}">尾页 &raquo;</a>
+        </span>
+
+        <div class="page-directer">
+            <form method="get" action="" class="page-jump-form">
+                <input type="number" name="page" min="1" max="{{ page_obj.paginator.num_pages }}" placeholder="页码" style="width: 60px;">
+                <button type="submit">跳转</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const links = document.querySelectorAll('.song-card-music-list, .pagination-music-list .step-links-music-list a');
+            links.forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    var rect = link.getBoundingClientRect();
+                    var ripple = document.createElement('span');
+                    ripple.className = 'ripple-music-list';
+                    ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) + 'px';
+                    link.appendChild(ripple);
+                    ripple.style.left = e.clientX - rect.left - ripple.offsetWidth / 2 + 'px';
+                    ripple.style.top = e.clientY - rect.top - ripple.offsetHeight / 2 + 'px';
+
+                    setTimeout(function() {
+                        window.location.href = link.href;
+                    }, 200);
+
+                    ripple.addEventListener('animationend', function() {
+                        ripple.parentNode.removeChild(ripple);
+                    });
+
+                    e.preventDefault();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+{% endblock %}
